@@ -1,5 +1,12 @@
 from environment.v1 import FishPondEnv
 import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Flatten, Convolution2D, Permute
+from keras.optimizers import Adam
+import keras.backend as K
+
+
+NUM_STEPS = 1
 
 params = {
     'num_agents': 1, #dont change
@@ -23,7 +30,9 @@ state = env.reset()
 action_dict = np.array(['Eat Fish', 'Up', 'Down', 'Left', 'Right'])
 
 
-for t in range(15):
+
+
+for t in range(NUM_STEPS):
     print('\n T =', t, '\n')
     print(state[:env.grid_area].reshape(env.grid_size, env.grid_size))
     actions = int(input())#np.random.randint(0, 5, env.num_agents)
