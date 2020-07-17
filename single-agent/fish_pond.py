@@ -99,9 +99,18 @@ class FishPondEnv(gym.Env):
     def step(self, actions): #Discuss about synchronization in real time before each agent takes action
         self.steps += 1
         rewards = np.array([])
+        if (self.num_agents == 1):
+            actions = [actions]
         for agent_index in range(self.num_agents):
             reward = self.step_agent(agent_index, actions[agent_index])
             rewards = np.append(rewards, reward)
         rewards, done = self.check_termination(rewards) #Check for steps beyond done
+        if (self.num_agents == 1):
+            rewards = rewards[0]
         print(done)
-        return [self.state, rewards, done]
+        info = {}
+        return [self.state, rewards, done, info]
+
+    def render(self, mode):
+        print('Hello')
+        return
