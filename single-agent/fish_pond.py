@@ -1,6 +1,8 @@
 import numpy as np
+import time
 import gym
 from gym import spaces, logger
+from IPython.display import clear_output
 
 
 class FishPondEnv(gym.Env):
@@ -29,10 +31,9 @@ class FishPondEnv(gym.Env):
         agent_location = np.random.choice(range(self.pond_area, self.grid_area), self.num_agents)
         self.loc_agents = agent_location
         grid[agent_location] = 3
-        fish_count = [self.params['fish_count_initial']]
+        self.fish_count = float(self.params['fish_count_initial'])
         agent_health = self.num_agents * [self.params['health_max']]
-        state = np.append(grid, [fish_count + agent_health])
-        self.running_fish_count = float(self.params['fish_count_initial'])
+        state = np.append(grid, [[self.fish_count] + agent_health])
         return state
         
     def reset(self):
@@ -54,13 +55,13 @@ class FishPondEnv(gym.Env):
             return 0
         reward = self.params['reward_per_step']
         grid = self.state[:self.grid_area].reshape(self.grid_size, self.grid_size)
-        fish_count = self.running_fish_count#self.state[self.grid_area]
+        fish_count = self.fish_count
         loc_vt, loc_hz = self.to_grid_index(self.loc_agents[agent_index]) #Update self.loc_agents
         grid[loc_vt, loc_hz] = 0
         
         if (action == 0):
             if (grid[loc_vt-1][loc_hz] == 2 and fish_count >= 1):
-                fish_count = np.clip(int(fish_count) - 1, 0, self.params['fish_count_max'])
+                fish_count = np.clip(fish_count - 1, 0, self.params['fish_count_max'])
                 agent_health = np.clip(agent_health + self.params['nutrition_per_fish'], 0, self.params['health_max'])
                 
                 
@@ -78,10 +79,8 @@ class FishPondEnv(gym.Env):
         grid[loc_vt, loc_hz] = 3
         self.loc_agents[agent_index] = self.to_grid_index([loc_vt, loc_hz], inverse=True)
         agent_health = np.clip(agent_health - self.params['hunger_per_step'], 0, self.params['health_max'])
-        print("old fish count - ",fish_count)
         fish_count = np.clip(fish_count + self.params['fish_regeneration_rate'] * fish_count, 0, self.params['fish_count_max'])
-        print("new fish count - ",fish_count, fish_count + self.params['fish_regeneration_rate'] * fish_count)
-        self.running_fish_count = fish_count
+        self.fish_count = fish_count
         self.state[:self.grid_area] = grid.flatten()
         self.state[self.grid_area] = int(fish_count)
         self.state[(self.grid_area + 1 + agent_index)] = agent_health
@@ -107,10 +106,20 @@ class FishPondEnv(gym.Env):
         rewards, done = self.check_termination(rewards) #Check for steps beyond done
         if (self.num_agents == 1):
             rewards = rewards[0]
-        print(done)
         info = {}
         return [self.state, rewards, done, info]
 
-    def render(self, mode):
-        print('Hello')
+    def render(self, mode, delay=1):
+        clear_output(wait=True)
+        grid = self.state[:self.grid_area].reshape(self.grid_size, self.grid_size).astype(int)
+        fish_count = self.state[self.grid_area]
+        agent_health = self.state[(self.grid_area + 1):]
+        print('Fish Count:', fish_count)
+        print('Fish Count (Running):', self.fish_count)
+        print('Agent Health:', agent_health)
+        print('\n')
+        for row in grid:
+            print(' '.join(map(str, row)))
+        print('\n')
+        time.sleep(delay)
         return
