@@ -91,7 +91,7 @@ class FishPondEnv(gym.Env):
         agents_health = self.state[self.grid_area + 1 : self.grid_area + 1 + self.num_agents]
         condition1 = False if (np.sum(agents_health)) else True
         condition2 = False if (fish_count) else True
-        condition3 = False if (self.steps <= self.params['episode_length']) else True
+        condition3 = False if (self.steps < self.params['episode_length']) else True
         done = condition1 or condition2 or condition3
         return [rewards, done]
     
