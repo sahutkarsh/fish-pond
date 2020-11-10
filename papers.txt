@@ -1,0 +1,10 @@
+RL Under Moral Uncertainty - Adrien Ecoffet
+Dynamics of RL in Cooperative Multiagent Systems - Caroline Claus
+Emergent Complexity via Multi Agent Competition - Trapit Bansal
+Learning to Communicate with Deep MARL - Jakob Foerster
+LOLA - Jakob Foerster
+MARL in Social Sequential Dilemmas - Joel Leibo
+Review of Cooperative Multiagent Systems - Afshin Oroojlooy Jadid
+Self Play for Competitive RL - Yu Bai
+The Evolution for Cooperation - Robert Axelrod
+The Iterated Prisoner's Dilemma: Good Strategies and their Dynamics - Ethan Akin
